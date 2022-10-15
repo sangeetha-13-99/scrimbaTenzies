@@ -1,6 +1,7 @@
 import "./styles.css";
 import React from "react";
 import Die from "./Die";
+// import useWindowSize from 'react-use/lib/useWindowSize'
 import Confetti from "react-confetti";
 export default function App() {
   const [dies, setDies] = React.useState(newDies);
@@ -9,7 +10,7 @@ export default function App() {
   const [local, updateLocal] = React.useState(
     () => localStorage.getItem("bestOfTenzies") || 50
   );
-  // console.log(localStorage.getItem('bestOfTenzies'))
+  // const { width, height } = useWindowSize()
   React.useEffect(() => {
     let dieValue,
       istenzies = 0;
@@ -26,9 +27,10 @@ export default function App() {
 
   React.useEffect(() => {
     if (tenzies) {
-      noOfRolls < Number(local) &&
-        localStorage.setItem("bestOfTenzies", noOfRolls) &&
+      if(noOfRolls < Number(local) ){
+        localStorage.setItem("bestOfTenzies", noOfRolls);
         updateLocal(noOfRolls);
+      }
     }
   }, [tenzies]);
 
@@ -38,7 +40,7 @@ export default function App() {
       newDiesArray.push({
         id: i,
         value: Math.floor(Math.random() * 6) + 1,
-        onhold: false
+        onhold: false,
       });
     }
     return newDiesArray;
@@ -65,9 +67,12 @@ export default function App() {
   }
   function resetDies() {
     setDies(newDies);
+    setNoOfRolls(0);
   }
 
   return (
+    <div>
+    {tenzies && <Confetti gravity={0.4} width={window.innerWidth}/>}
     <div className="game-border-outer">
       <div className="game-border-inner">
         <h2 className="game-heading">Tenzies</h2>
@@ -97,13 +102,11 @@ export default function App() {
               <span>best of tenzies :</span>
               <span>{local}</span>
             </div>
-            {/* <div className=" no-of-rolls best-tenzies">
-            </div> */}
           </div>
         )}
         {!tenzies && <button onClick={rollDice}>Roll Dice</button>}
-        {tenzies && <Confetti gravity={0.4} />}
       </div>
+    </div>
     </div>
   );
 }
